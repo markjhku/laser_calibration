@@ -13,11 +13,12 @@ from laser_calibration.generic_optimize import generic_optimize
 
 if __name__ == "__main__":
     
-    sim = GaussianIonResponseSimulation(photon_number=100,x_center=-0.325,y_center=0,x_width=0.3,y_width=100,use_poisson_distribution=False)
+    sim = GaussianIonResponseSimulation(photon_number=100,x_center=-0.325,y_center=.523,x_width=0.3,y_width=0.2,use_poisson_distribution=False)
     
     
-    syst = LaserCalibrationSystem(ion_response_function=lambda x: sim.measure_ion_response(x,y=0))
+    syst = LaserCalibrationSystem(ion_response_function=lambda x,y: sim.measure_ion_response(x,y))
     syst.simulation = True
     syst.add_mirror("x", None)
-    syst.simulation_mirror_set = ["x"]
+    syst.add_mirror("y", None)    
+    syst.simulation_mirror_set = ["x","y"]
     generic_optimize(syst)
