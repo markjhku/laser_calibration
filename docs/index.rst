@@ -3,21 +3,22 @@ Documentation for laser_calibration package
 
 Introduction
 -------
-The main concept for the laser_calibration package is to provide a framework for moving mirror, storing mirror position, and obtaining ion response, so that the user can build customized optimization calibration routine. The key modules are Mirror and LaserCalibrationSystem modules. The package also provides a built-in grid_sweep_optimize and generic_optimize functions. Simulation mode is also provided, which can provide realistic simulation of ion response that takes into account of photon shot noise. 
+The main concept for the ``laser_calibration`` package is to provide a framework for moving mirror, storing mirror position, and obtaining ion response, so that the user can build customized optimization calibration routine. The key modules are ``Mirror`` and ``LaserCalibrationSystem`` modules. The package also provides a built-in ``grid_sweep_optimize`` and ``generic_optimize`` functions. Simulation mode is also provided, with a generic ``IonResponseSimulation`` class and a ``GaussianIonResponseSimulation`` class, which can provide realistic simulation of ion response that takes into account of photon shot noise. 
 
-Examples can be found in \examples\. Unit tests are found in \tests\. 
+Examples can be found in `\examples\`. Unit tests are found in `\tests\`. 
 
 Improvements I envision, if I have more time, include:
 
+- currently, calibration over two-dimensional mirror movement is supported. General N-dimensional calibration should be readily feasible, with small changes to the codebase, which is for future effort.
 - more sophisticated optimization algorithm, such as Bayesian optimization
-- tracking mode, where the system will measure a response, and move in small steps and follow the gradient of response for steepest ascent. This is similar to the existing generic_optimize, which makes use of scipy's Optimize routine; however, the Optimize routine is not robust against present of noise (whether instrument or photon shot noise), so a custom routine needs to be built, which will be for a future effort.
+- tracking mode, where the system will measure a response, and move in small steps and follow the gradient of response for steepest ascent. This is similar to the existing `generic_optimize`, which makes use of `scipy`'s `Optimize` routine; however, the `Optimize` routine is not robust against present of noise (whether instrument or photon shot noise), so a custom routine needs to be built, which will be for a future effort.
 - more comprehensive documentation. Due to time constraint, here I document the key functionalities. 
 
 
-Mirror module
+Mirror class
 -------
 
-The mirror module provides a class for controlling and storing mirror position. The ability to cache (store) the last position mirror is set to allows the ability to do tracking (this functionality is not built out in the current iteration), as well as necessary for simulation.
+The `Mirror` class provides a class for controlling and storing mirror position. The ability to cache (store) the last position mirror is set to allows the ability to do tracking (this functionality is not built out in the current iteration), as well as necessary for simulation.
 
 To import, run
 
@@ -27,29 +28,29 @@ To initiate a mirror instance, run
 
     mirror = Mirror(move_mirror_function)
 
-where move_mirror_function is the function handle for moving mirror position. In simulation mode, one can simply do 
+where `move_mirror_function` is the function handle for moving mirror position. In simulation mode, one needs not supply this function, and to instantiate a `Mirror` object, can simply do 
 
     mirror = Mirror()
 
-Position can be obtained/set using the position property. E.g.
+Position can be obtained/set using the `position` property. E.g.
 
     mirror.position = 0.1
 
-Will set mirror to position 0.1. Mirror position can be between -1 to 1. Running
+Will set mirror to position 0.1. Mirror position can be between -1 to 1. Subsequently, running
 
     mirror.position
 
-Will then return 0.1, the last mirror position.
+In this case will return the value `0.1`, the last mirror position.
 
-LaserCalibrationSystem module
+LaserCalibrationSystem class
 -------
-This is the center piece of the codebase. An instance of LaserCalibrationSystem involves a set of Mirror instances, and an ion_response_function that measures the response from ions (number of photons). 
+This is the center piece of the codebase. An instance of `LaserCalibrationSystem` involves a set of `Mirror` instances, and an `ion_response_function` that measures the response from ions (number of photons). 
 
 To import, run
 
     from laser_calibration.laser_calibration_system import LaserCalibrationSystem
 
-To initiate, you must provide an ion_response_function. This would be the function that shoots the laser and measure number of photons. For simulation, see examples such as \examples\simulatiON-laser_calibration_system.2d.py.
+To initiate, you must provide an `ion_response_function`. This would be the function that shoots the laser and measure number of photons. 
 
 To initiate run,
 
@@ -66,10 +67,11 @@ For working with real instruments, the ion_response_function needs to be a funct
 
         syst.simulation = True
 
-Second, one needs to indicate which mirror correspond to which axis, in the form of list. E.g. to set "mirror_1" to be the first axis and "mirror_2" to be the second axis, one runs
+Second, one needs to indicate which mirror correspond to which axis, in the form of list. E.g. to set `"mirror_1"` to be the first axis and `"mirror_2"` to be the second axis, one runs
 
     syst.simulation_mirror_set = ["mirror_1", "mirror_2"]
 
+All the examples in `\examples\` make use of simulation mode; one can see concrete example of how to use simulation in these examples.
 
 To get all the mirrors, run
 
@@ -77,15 +79,33 @@ To get all the mirrors, run
 
 This will return a list of all the strings of mirror names.
 
-To move mirrors and measure ion response, here is an example code
+With a LaserCalibrationSystem instantiated such as the one above, to move mirrors and measure ion response, one would run command such as the one below
 
-    syst.move_mirrors_and_measure(**{"mirror_name_1": 0.1, "mirror_name_2": -0.2})
-
-Or 
     syst.move_mirrors_and_measure(mirror_name_1 = 0.1, mirror_name_2 = -0.2)
+
+This will move the mirror with the name `"mirror_name_1"` to position `0.1`, and move the mirror with the name `"mirror_name_2"` to position `-0.1`,
 
 With this function, one can build up customized optimization algorithm.
 
+
+IonResponseSimulation and GaussianIonResponseSimulation
+-------
+These are two built-in classes for providing simulated ion response. The ``IonResponseSimulation`` allows for generating generic spatial distribution of photon count. To import, one runs
+
+    from laser_calibration.ion_response_simulation import IonResponseSimulation
+
+Then
+    sim = IonResponseSimulation(photon_distribution,use_poisson_distribution,measurement_noise)
+
+Here, ``photon_distribution`` is a function that takes two arguments, ``x`` and ``y``, and return the average photon number. ``use_poisson_distribution`` is boolean, and tells ``IonResponseSimulation`` whether to generate photon count using Poisson distribution or simply the value from ``photon_distribution`` function. ``measurement_noise`` is a ``float`` that indicates noise level from instrument. 
+
+Based on ``IonResponseSimulation``, I also provide ``GaussianIonResponseSimulation`` which essentially uses a Gaussian distribution for ``photon_distribution``. Therefore, in setting up  ``GaussianIonResponseSimulation``, instead of supplying a function, one supplies parameters of the Gaussian distribution.
+
+To import:
+    from laser_calibration.ion_response_simulation import GaussianIonResponseSimulation
+
+The one runs the command such as below:
+    sim = GaussianIonResponseSimulation(photon_number=100,x_center=0.1,y_center=0.2,x_width=0.3,y_width=0.4)
 
 grid_sweep_optimize function
 -------
