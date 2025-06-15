@@ -17,6 +17,13 @@ Introduction
 -------
 The main concept for the ``laser_calibration`` package is to provide a framework for moving mirror, storing mirror position, and obtaining ion response, so that the user can build customized optimization calibration routine. The key modules are ``Mirror`` and ``LaserCalibrationSystem`` classes. The package also provides a built-in ``grid_sweep_optimize`` and ``generic_optimize`` functions. Simulation mode is also provided, with a generic ``IonResponseSimulation`` class and a ``GaussianIonResponseSimulation`` class, which can provide realistic simulation of ion response that takes into account of photon shot noise. 
 
+Here are key assumptions in building this package:
+1. Mirror control function and ion response function is available from elsewhere. For simulation purpose, mirror control function is not needed, and I provide a framework for generating simulated ion response. 
+2. Multiple sets of mirror systems may need to be calibrated in the same setting, and possibly the different sets of mirror systems may contain same mirrors. As a result, I provide LaserCalibrationSystem class to which one can add arbitrary sets of mirrors.
+3. Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will 
+Be built out as optimization routine. 
+4. Calibration routine provided in this package assumes a single ion present in the range of the mirror movement.
+
 Improvements I envision, if I have more time, include:
 
 - currently, calibration over two-dimensional mirror movement is supported. General N-dimensional calibration should be readily feasible, with small changes to the codebase, which is for future effort.
