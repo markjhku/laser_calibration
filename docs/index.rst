@@ -27,19 +27,19 @@ To import, run::
 
     from laser_calibration.mirror import Mirror
 
-To initiate a mirror instance, run
+To initiate a mirror instance, run::
 
     mirror = Mirror(move_mirror_function)
 
-where ``move_mirror_function`` is the function handle for moving mirror position. In simulation mode, one needs not supply this function, and to instantiate a ``Mirror`` object, can simply do 
+where ``move_mirror_function`` is the function handle for moving mirror position. In simulation mode, one needs not supply this function, and to instantiate a ``Mirror`` object, can simply do::
 
     mirror = Mirror()
 
-Position can be obtained/set using the ``position`` property. E.g.
+Position can be obtained/set using the ``position`` property. E.g.::
 
     mirror.position = 0.1
 
-Will set mirror to position 0.1. Mirror position can be between -1 to 1. Subsequently, running
+Will set mirror to position 0.1. Mirror position can be between -1 to 1. Subsequently, running::
 
     mirror.position
 
@@ -49,40 +49,40 @@ LaserCalibrationSystem class
 -------
 This is the center piece of the codebase. An instance of `LaserCalibrationSystem` involves a set of ``Mirror`` instances, and an ``ion_response_function`` that measures the response from ions (number of photons). 
 
-To import, run
+To import, run::
 
     from laser_calibration.laser_calibration_system import LaserCalibrationSystem
 
 To initiate, you must provide an ``ion_response_function``. This would be the function that shoots the laser and measure number of photons. 
 
-To initiate run,
+To initiate run::
 
      syst = LaserCalibrationSystem(ion_response_function)
 
 
-You will then want to add mirror. You need to provide a name, and a mirror instance or mirror movement function ``mirror1``:
+You will then want to add mirror. You need to provide a name, and a mirror instance or mirror movement function ``mirror1``::
 
     syst.add_mirror("mirror_name_1", mirror1)
 
 If you provide a mirror movement function, a mirror instance will be created.
 
-For working with real instruments, the ``ion_response_function`` needs to be a function that takes no argument. To use simulation mode, one needs provide ``ion_response_function`` that takes N number of arguments which correspond to position of mirrors. Furthermore, two additional commands need to be run. First, the simulation property needs to be set to be True:
+For working with real instruments, the ``ion_response_function`` needs to be a function that takes no argument. To use simulation mode, one needs provide ``ion_response_function`` that takes N number of arguments which correspond to position of mirrors. Furthermore, two additional commands need to be run. First, the simulation property needs to be set to be True::
 
         syst.simulation = True
 
-Second, one needs to indicate which mirror correspond to which axis, in the form of list. E.g. to set `"mirror_1"` to be the first axis and `"mirror_2"` to be the second axis, one runs
+Second, one needs to indicate which mirror correspond to which axis, in the form of list. E.g. to set `"mirror_1"` to be the first axis and `"mirror_2"` to be the second axis, one runs::
 
     syst.simulation_mirror_set = ["mirror_1", "mirror_2"]
 
 All the examples in ``\examples\`` make use of simulation mode; one can see concrete example of how to use simulation in these examples.
 
-To get all the mirrors, run
+To get all the mirrors, run::
 
     syst.get_all_mirror_names()
 
 This will return a list of all the strings of mirror names.
 
-With a LaserCalibrationSystem instantiated such as the one above, to move mirrors and measure ion response, one would run command such as the one below
+With a LaserCalibrationSystem instantiated such as the one above, to move mirrors and measure ion response, one would run command such as the one below::
 
     syst.move_mirrors_and_measure(mirror_name_1 = 0.1, mirror_name_2 = -0.2)
 
@@ -93,11 +93,11 @@ With this function, one can build up customized optimization algorithm.
 
 IonResponseSimulation and GaussianIonResponseSimulation
 -------
-These are two built-in classes for providing simulated ion response. The ``IonResponseSimulation`` allows for generating generic spatial distribution of photon count. To import, one runs
+These are two built-in classes for providing simulated ion response. The ``IonResponseSimulation`` allows for generating generic spatial distribution of photon count. To import, one runs::
 
     from laser_calibration.ion_response_simulation import IonResponseSimulation
 
-Then
+Then::
 
     sim = IonResponseSimulation(photon_distribution,use_poisson_distribution,measurement_noise)
 
@@ -105,11 +105,11 @@ Here, ``photon_distribution`` is a function that takes two arguments, ``x`` and 
 
 Based on ``IonResponseSimulation``, I also provide ``GaussianIonResponseSimulation`` which essentially uses a Gaussian distribution for ``photon_distribution``. Therefore, in setting up  ``GaussianIonResponseSimulation``, instead of supplying a function, one supplies parameters of the Gaussian distribution.
 
-To import:
+To import::
 
     from laser_calibration.ion_response_simulation import GaussianIonResponseSimulation
 
-The one runs the command such as below:
+The one runs the command such as below::
 
     sim = GaussianIonResponseSimulation(photon_number=100,x_center=0.1,y_center=0.2,x_width=0.3,y_width=0.4)
 
@@ -119,11 +119,11 @@ grid_sweep_optimize function
 -------
 This is a built-in calibration routine where up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort) will be swept, with photon number recorded at each ``(x,y)`` location, and the photon number distribution ``n(x,y)`` is fitted to 1 or 2D Gaussian, and the center of the distribution is the location where the mirrors are set to.
 
-To import, run
+To import, run::
 
     from laser_calibration.grid_sweep_optimize import grid_sweep_optimize
 
-To use, simply run
+To use, simply run::
 
     grid_sweep_optimize(syst)
 
@@ -135,11 +135,11 @@ generic_optimize function
 -------
 This is a built-in calibration routine where ``scipy``'s ``optimize`` module to optimize the photon number over up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort). More specifically, the ``minimize`` function of ``optimize`` will be used to minimize the negative of the photon number (equivalent to maximizing photon number). This routine is purely for proof-of-principle purpose; during testing, it is found that it is not robust in the presence of any noise, including photon shot noise. Therefore, to use this, one has to use a noise-less photon distribution (without photon shot noise), which is not physical. Nevertheless, this function demonstrates the architecture for using a generic optimization routine for calibration. 
 
-To import, run
+To import, run::
 
     from laser_calibration.generic_optimize import generic_optimize
 
-To use, simply run
+To use, simply run::
 
     generic_optimize(syst)
 
