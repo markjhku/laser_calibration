@@ -9,7 +9,7 @@ This example demonstrates using grid_sweep_optimize routine for calibration.
 from laser_calibration.ion_response_simulation import GaussianIonResponseSimulation
 from laser_calibration.laser_calibration_system import LaserCalibrationSystem
 
-from laser_calibration.generic_optimize import generic_optimize
+from laser_calibration.grid_sweep_optimize import grid_sweep_optimize
 
 if __name__ == "__main__":
     
@@ -28,4 +28,4 @@ if __name__ == "__main__":
     syst.simulation_mirror_set = ["x"]
     
     # perform optimization of ion response to calibrate the system    
-    generic_optimize(syst)
+    grid_sweep_optimize(syst)
