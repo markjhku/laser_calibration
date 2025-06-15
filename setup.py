@@ -15,5 +15,10 @@ setup(
     long_description=readme,
     author='Mark Ku',
     author_email='mark.jh.ku@gmail.com',
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs')),
+    install_requires=[
+        'scipy==1.15.3',
+        'numpy',
+	'matplotlib'
+    ]
 )
