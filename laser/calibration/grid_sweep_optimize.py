@@ -57,8 +57,8 @@ def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: 
         
         index_x,index_y = np.unravel_index(np.argmax(response),shape=response.shape)
         amplitude_guess = np.max(response)
-        x0_guess = independent_variables[index_x]
-        y0_guess = independent_variables[index_y]        
+        x0_guess = grid_values[index_x]
+        y0_guess = grid_values[index_y]        
         p0 = [amplitude_guess, x0_guess,.1,y0_guess,.1]
         
     else:
