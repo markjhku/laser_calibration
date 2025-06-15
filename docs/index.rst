@@ -64,7 +64,7 @@ You will then want to add mirror. You need to provide a name, and a mirror insta
 
 If you provide a mirror movement function, a mirror instance will be created.
 
-For working with real instruments, the ion_response_function needs to be a function that takes no argument. To use simulation mode, one needs provide ion_response_function that takes N number of arguments which correspond to position of mirrors. Furthermore, two additional commands need to be run. First, the simulation property needs to be set to be True:
+For working with real instruments, the ``ion_response_function`` needs to be a function that takes no argument. To use simulation mode, one needs provide ``ion_response_function`` that takes N number of arguments which correspond to position of mirrors. Furthermore, two additional commands need to be run. First, the simulation property needs to be set to be True:
 
         syst.simulation = True
 
