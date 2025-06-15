@@ -63,7 +63,7 @@ To import, run::
 
 To initiate, you must provide an ``ion_response_function``. This would be the function that shoots the laser and measure number of photons. 
 
-To initiate run::
+To initiate, run::
 
      syst = LaserCalibrationSystem(ion_response_function)
 
@@ -74,7 +74,7 @@ You will then want to add mirror. You need to provide a name, and a mirror insta
 
 If you provide a mirror movement function, a mirror instance will be created.
 
-For working with real instruments, the ``ion_response_function`` needs to be a function that takes no argument. To use simulation mode, one needs provide ``ion_response_function`` that takes N number of arguments which correspond to position of mirrors. Furthermore, two additional commands need to be run. First, the simulation property needs to be set to be True::
+For working with real instruments, the ``ion_response_function`` needs to be a function that takes no argument. To use simulation mode, one needs provide ``ion_response_function`` that takes N number of arguments which correspond to position of mirrors. Furthermore, two additional commands need to be run. First, the simulation property needs to be set to be ``True``::
 
         syst.simulation = True
 
@@ -90,7 +90,7 @@ To get all the mirrors, run::
 
 This will return a list of all the strings of mirror names.
 
-With a LaserCalibrationSystem instantiated such as the one above, to move mirrors and measure ion response, one would run command such as the one below::
+With a ``LaserCalibrationSystem`` instantiated such as the one above, to move mirrors and measure ion response, one would run command such as the one below::
 
     syst.move_mirrors_and_measure(mirror_name_1 = 0.1, mirror_name_2 = -0.2)
 
