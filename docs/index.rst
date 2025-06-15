@@ -23,7 +23,7 @@ Mirror class
 
 The ``Mirror`` class provides a class for controlling and storing mirror position. The ability to cache (store) the last position mirror is set to allows the ability to do tracking (this functionality is not built out in the current iteration), as well as necessary for simulation.
 
-To import, run
+To import, run::
 
     from laser_calibration.mirror import Mirror
 
