@@ -1,4 +1,6 @@
 Documentation for laser_calibration package
+
+.. _Documentation:
 =====
 
 Introduction
