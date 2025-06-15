@@ -25,7 +25,7 @@ Here are key assumptions in building this package:
 - Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will 
 Be built out as optimization routine. 
 - Calibration routine provided in this package assumes a single ion present in the range of the mirror movement.
-- Gaussian distribution is a good approximation of the intensity distribution of ion response. This is the basis for the ``grid_sweep_optimize`` fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function)
+- Gaussian distribution is a good approximation of the intensity distribution of ion response. This is the basis for the ``grid_sweep_optimize`` fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function). Furthermore, it is assumed that the width of the distribution is a fraction of the mirror range.
 
 Improvements I envision, if I have more time, include:
 
