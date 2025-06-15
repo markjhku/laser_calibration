@@ -72,7 +72,7 @@ Second, one needs to indicate which mirror correspond to which axis, in the form
 
     syst.simulation_mirror_set = ["mirror_1", "mirror_2"]
 
-All the examples in `\examples\` make use of simulation mode; one can see concrete example of how to use simulation in these examples.
+All the examples in ``\examples\`` make use of simulation mode; one can see concrete example of how to use simulation in these examples.
 
 To get all the mirrors, run
 
