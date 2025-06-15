@@ -1,14 +1,36 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  6 16:34:20 2025
-
 @author: markjhku
 """
 from laser_calibration.mirror import Mirror
 
 
 class LaserCalibrationSystem():
+    
+    """
+        This provides a class for laser calibration system which combines
+        mirrors and ion response measurement. Currently, up to two spatial 
+        dimensions is supported.
+        
+        To instantiate, one has to supply `ion_response_function`, which is a 1D
+        or 2D function that corresponds to the average-photon distribution 
+        function at x and y.
+        
+        The following are the key methods:
+            
+        The `add_mirror` method allows one to add mirror to be associated
+        with the laser calibration system.
+        
+        The `get_all_mirror_names` function gets all the names of the currently
+        associated mirrors
+        
+        The `move_mirrors_and_measure` method move mirrors to specified 
+        positions and perform measurement
+        
+        To use simulation mode, see, for examples such as
+        `simulation_laser_calibration_system_1d.py`
+    """
     def __init__(self, ion_response_function):
 
        self._ion_response_function = ion_response_function
@@ -18,6 +40,15 @@ class LaserCalibrationSystem():
 
     
     def add_mirror(self, mirror_name: str, mirror_object):
+        
+        """
+            add a mirror to be associated with the laser calibraiton system.
+            
+            mirror_name: str, name of the mirror
+            mirror_object: either a Mirror instance, a mirror control
+            function handle, or None (for simulation purpose)
+                
+        """
         if mirror_name in self._mirror_set:
             m = "supplied mirror_name is already in the mirror set"
             raise ValueError(m)
@@ -31,12 +62,18 @@ class LaserCalibrationSystem():
         self._mirror_set[mirror_name] = mirror_object
 
     def get_all_mirror_names(self):
+        """
+            get all currently associated mirror names
+                
+        """
+        
         return list(self._mirror_set.keys())
 
     def get_mirror_position(self, mirror_name: str):
         """
             Get position of a single mirror
-
+            
+            mirror_name: str, name of mirror whose position is to be returned
 
         """
         if mirror_name not in self._mirror_set:
@@ -49,7 +86,8 @@ class LaserCalibrationSystem():
         """
             Move a single mirror
 
-
+            mirror_name: str, name of mirror to be moved
+            position: float, position to be moved to
         """
         if mirror_name not in self._mirror_set:
             m = "mirror_name is not in the mirror set"
@@ -59,8 +97,9 @@ class LaserCalibrationSystem():
     
     def batch_move_mirrors(self,**kwargs):
         """
-            Batch move mirrors
-
+            Batch move mirrors. Takes keyword arguments in the form of
+            mirror_name = position.
+            
         """        
         [self.move_mirror(mirror_name = key, position = value) for key, value in kwargs.items()]
         
@@ -108,5 +147,10 @@ class LaserCalibrationSystem():
 
 
     def move_mirrors_and_measure(self,**kwargs):
+        """
+            Batch move mirrors and perform measurement. 
+            Takes keyword arguments in the form of mirror_name = position.
+            
+        """        
         self.batch_move_mirrors(**kwargs)
         return self.measure_ion_response()

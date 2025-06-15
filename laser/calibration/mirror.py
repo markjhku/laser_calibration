@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  6 16:34:20 2025
-
 @author: markjhku
 """
 
 
 
 class Mirror():
+    
+    """
+        Class for mirror object. To instantiate, supply a `move_mirror_function`.
+        `move_mirror_function` may be None for simulation mode
+        
+        The property `position` allows for moving to a new position and
+        obtaining the position that was last set
+        
+        The property `move_mirror_function` points to the current
+        `move_mirror_function` associated with the given Mirror object
+    """
     def __init__(self, move_mirror_function = None):
        self._position = 0
   
@@ -16,8 +25,8 @@ class Mirror():
 
     def move_mirror_to_position(self,position: float | None = None):
         """
-            moves mirror to position x
-            x: float can be between -1 to 1  
+            moves mirror to position
+            position: float can be between -1 to 1  
         """
 
         if position is not None:
@@ -32,6 +41,7 @@ class Mirror():
                 
     @property
     def position(self):
+
         return self._position
     
     @position.setter

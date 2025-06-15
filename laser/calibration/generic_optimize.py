@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  6 16:34:20 2025
-
 @author: markjhku
 """
 
@@ -14,7 +12,14 @@ from scipy.optimize import minimize
 
 def generic_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: str | list[str] | None = None,samples: int = 1):
     """
-
+        function to calibrate by using scipy's optimize.minimize function.
+        
+        Arguments:
+        laser_syst: a LaserCalibrationSystem instance
+        
+        Optional arguments:
+        optimize_over_axes: str | list[str] | None. Specify which mirror
+        samples: how many samples of measurements to take at a given point
     """
     if optimize_over_axes is None:
         optimize_over_axes = laser_syst.get_all_mirror_names()

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  6 16:34:20 2025
-
 @author: markjhku
 """
 
@@ -15,7 +13,17 @@ from matplotlib import pyplot as plt
 
 def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: str | list[str] | None = None,  step: float = 0.1, plot: bool = True):
     """
-
+        functino to perform grid sweep over up to 2 dimensions, and then
+        perform Gaussian fit to find the optimal operating point.
+        
+        Arguments:
+        laser_syst: a LaserCalibrationSystem instance
+        
+        Optional arguments:
+        optimize_over_axes: str | list[str] | None. Specify which mirror
+        axes to optmize over (if None, all is assumed)
+        step: float, defaulted to 0.1. Step size of sweep
+        plot: bool, defaulted to True. Whether to display the final plot.
     """
     
     if optimize_over_axes is None:
