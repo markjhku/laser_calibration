@@ -19,6 +19,7 @@ The main concept for the ``laser_calibration`` package is to provide a framework
 
 Here are key assumptions in building this package:
 - Mirror control function and ion response function is available from elsewhere. For simulation purpose, mirror control function is not needed, and I provide a framework for generating simulated ion response. 
+- Mirror position can be -1 to 1. It is not necessarily an absolute unit, but rather a relative range
 - Multiple sets of mirror systems may need to be calibrated in the same setting, and possibly the different sets of mirror systems may contain same mirrors. As a result, I provide LaserCalibrationSystem class to which one can add arbitrary sets of mirrors.
 - Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will 
 Be built out as optimization routine. 
