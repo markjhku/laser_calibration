@@ -12,14 +12,14 @@ Improvements I envision, if I have more time, include:
 - currently, calibration over two-dimensional mirror movement is supported. General N-dimensional calibration should be readily feasible, with small changes to the codebase, which is for future effort.
 - Integrate some kind of asynchronous operation for setting multiple mirrors in parallel
 - more sophisticated optimization algorithm, such as Bayesian optimization
-- tracking mode, where the system will measure a response, and move in small steps and follow the gradient of response for steepest ascent. This is similar to the existing `generic_optimize`, which makes use of `scipy`'s `optimize` module; however, the `optimize` routine is not robust against present of noise (whether instrument or photon shot noise), so a custom routine needs to be built, which will be for a future effort.
+- tracking mode, where the system will measure a response, and move in small steps and follow the gradient of response for steepest ascent. This is similar to the existing ``generic_optimize``, which makes use of ``scipy``'s ``optimize`` module; however, the ``optimize`` routine is not robust against presence of noise (whether instrument or photon shot noise), so a custom routine needs to be built, which will be for a future effort.
 - more comprehensive documentation. Due to time constraint, here I document the key functionalities. 
 
 
 Mirror class
 -------
 
-The `Mirror` class provides a class for controlling and storing mirror position. The ability to cache (store) the last position mirror is set to allows the ability to do tracking (this functionality is not built out in the current iteration), as well as necessary for simulation.
+The ``Mirror`` class provides a class for controlling and storing mirror position. The ability to cache (store) the last position mirror is set to allows the ability to do tracking (this functionality is not built out in the current iteration), as well as necessary for simulation.
 
 To import, run
 
@@ -29,11 +29,11 @@ To initiate a mirror instance, run
 
     mirror = Mirror(move_mirror_function)
 
-where `move_mirror_function` is the function handle for moving mirror position. In simulation mode, one needs not supply this function, and to instantiate a `Mirror` object, can simply do 
+where ``move_mirror_function`` is the function handle for moving mirror position. In simulation mode, one needs not supply this function, and to instantiate a ``Mirror`` object, can simply do 
 
     mirror = Mirror()
 
-Position can be obtained/set using the `position` property. E.g.
+Position can be obtained/set using the ``position`` property. E.g.
 
     mirror.position = 0.1
 
@@ -41,17 +41,17 @@ Will set mirror to position 0.1. Mirror position can be between -1 to 1. Subsequ
 
     mirror.position
 
-In this case will return the value `0.1`, the last mirror position.
+In this case will return the value ``0.1``, the last mirror position.
 
 LaserCalibrationSystem class
 -------
-This is the center piece of the codebase. An instance of `LaserCalibrationSystem` involves a set of `Mirror` instances, and an `ion_response_function` that measures the response from ions (number of photons). 
+This is the center piece of the codebase. An instance of `LaserCalibrationSystem` involves a set of ``Mirror`` instances, and an ``ion_response_function`` that measures the response from ions (number of photons). 
 
 To import, run
 
     from laser_calibration.laser_calibration_system import LaserCalibrationSystem
 
-To initiate, you must provide an `ion_response_function`. This would be the function that shoots the laser and measure number of photons. 
+To initiate, you must provide an ``ion_response_function``. This would be the function that shoots the laser and measure number of photons. 
 
 To initiate run,
 
