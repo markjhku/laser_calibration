@@ -22,8 +22,7 @@ Here are key assumptions in building this package:
 - Mirror control function and ion response function is available from elsewhere. For simulation purpose, mirror control function is not needed, and I provide a framework for generating simulated ion response. 
 - Mirror position can be -1 to 1. It is not necessarily an absolute unit, but rather a relative range
 - Multiple sets of mirror systems may need to be calibrated in the same setting, and possibly the different sets of mirror systems may contain same mirrors. As a result, I provide LaserCalibrationSystem class to which one can add arbitrary sets of mirrors.
-- Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will 
-Be built out as optimization routine. 
+- Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will be built out as optimization routine. 
 - Calibration routine provided in this package assumes a single ion present in the range of the mirror movement.
 - Gaussian distribution is a good approximation of the intensity distribution of ion response. This is the basis for the ``grid_sweep_optimize`` fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function). Furthermore, it is assumed that the width of the distribution is a fraction of the mirror range; as a result, initial fit parameters for width is likewise a fraction of unity.
 
