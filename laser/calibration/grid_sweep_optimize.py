@@ -38,21 +38,34 @@ def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: 
     
     if dimension == 1:
         model = gaussian_1d
-        p0 = [10, .01,.1]        
+           
         response = [laser_syst.move_mirrors_and_measure(x=x_val) for x_val in grid_values]
+        response = np.array(response)
         independent_variables = grid_values
+        
+        amplitude_guess = np.max(response)
+        x0_guess = independent_variables[np.argmax(response)]
+        p0 = [amplitude_guess, x0_guess,.1]
+        
     elif dimension == 2:
         model = gaussian_2d
-        p0 = [10, .01,.1,.01,.1]
+
         x,y = np.meshgrid(grid_values,grid_values,indexing='ij')
         independent_variables = (x,y)
-        response = [[laser_syst.move_mirrors_and_measure(x=x_val,y=y_val) for y_val in grid_values] for x_val in grid_values]    
+        response = [[laser_syst.move_mirrors_and_measure(x=x_val,y=y_val) for y_val in grid_values] for x_val in grid_values]  
+        response = np.array(response)
+        
+        index_x,index_y = np.unravel_index(np.argmax(response),shape=response.shape)
+        amplitude_guess = np.max(response)
+        x0_guess = independent_variables[index_x]
+        y0_guess = independent_variables[index_y]        
+        p0 = [amplitude_guess, x0_guess,.1,y0_guess,.1]
+        
     else:
         m = "optimization over more than 2 dimensions are not yet implemented"
         raise NotImplementedError(m)
         
-        
-    
+            
     response  = np.ravel(np.array(response ))
     popt, pcov = curve_fit(model,independent_variables,response,p0)
     
