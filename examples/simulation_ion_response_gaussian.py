@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  6 22:16:42 2025
-
 @author: markjhku
+This example demonstrates basic use of GaussianIonResponseSimulation.\
+
 """
 
 from laser_calibration.ion_response_simulation import GaussianIonResponseSimulation
@@ -11,8 +11,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 if __name__ == "__main__":
-    
+    # simulated response to be used
     sim = GaussianIonResponseSimulation(photon_number=1000,x_center=0.1,y_center=0.2,x_width=0.3,y_width=0.4)
+    
+    
+    # Generate response data and plot
     x_axis = np.linspace(-1,1,51)
     y_axis = np.linspace(-1,1,51)
     
