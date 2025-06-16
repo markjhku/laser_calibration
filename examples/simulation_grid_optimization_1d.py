@@ -14,9 +14,24 @@ from laser_calibration.grid_sweep_optimize import grid_sweep_optimize
 if __name__ == "__main__":
     
     # simulated response to be used
-    sim = GaussianIonResponseSimulation(photon_number=100,x_center=-0.325,y_center=0,x_width=0.3,y_width=100,use_poisson_distribution=False)
+    # note that `use_poisson_distribution` is set to False; this is because
+    # generic_optimize is not robust against noise
     
-    # instantiate a LaserCalibrationSystem class
+    photon_number = 100
+    x_center = -.325
+    x_width = 0.3
+    
+    # the parameters for y are just dummy parameters and can be anything
+    y_center = 0 
+    y_width = 100
+    print(f"x location used in simulation: ({x_center})")
+    sim = GaussianIonResponseSimulation(
+        photon_number=photon_number,
+        x_center=x_center,
+        y_center=y_center,
+        x_width=x_width,
+        y_width=y_width        )    
+            # instantiate a LaserCalibrationSystem class
     # Note how we set up a strictly 1D system here
     syst = LaserCalibrationSystem(ion_response_function=lambda x: sim.measure_ion_response(x,y=0))
 

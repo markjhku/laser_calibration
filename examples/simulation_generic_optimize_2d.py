@@ -15,7 +15,21 @@ if __name__ == "__main__":
     # simulated response to be used
     # note that `use_poisson_distribution` is set to False; this is because
     # generic_optimize is not robust against noise
-    sim = GaussianIonResponseSimulation(photon_number=100,x_center=-0.325,y_center=.523,x_width=0.3,y_width=0.2,use_poisson_distribution=False)
+    photon_number = 100
+    x_center = -.325
+    y_center = 0.523
+    x_width = 0.3
+    y_width = 0.2
+    
+    print(f"x and y location used in simulation: ({x_center}, {y_center})")
+    sim = GaussianIonResponseSimulation(
+        photon_number=photon_number,
+        x_center=x_center,
+        y_center=y_center,
+        x_width=x_width,
+        y_width=y_width,
+        use_poisson_distribution=False
+        )
     
     # instantiate a LaserCalibrationSystem class    
     syst = LaserCalibrationSystem(ion_response_function=lambda x,y: sim.measure_ion_response(x,y))
