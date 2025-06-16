@@ -44,8 +44,14 @@ def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: 
         independent_variables = grid_values
         
         amplitude_guess = np.max(response)
-        x0_guess = independent_variables[np.argmax(response)]
-        p0 = [amplitude_guess, x0_guess,.1]
+        
+        # use center-of-mass to get a guess of center
+        x0_guess = np.sum(grid_values*response)/np.sum(response)
+        
+        # use second moment to get a guess of the width
+        x_width_guess = np.sum((grid_values-x0_guess)**2*response)/np.sum(response)*np.sqrt(2)
+
+        p0 = [amplitude_guess, x0_guess,x_width_guess]
         
     elif dimension == 2:
         model = gaussian_2d
@@ -57,9 +63,15 @@ def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: 
         
         index_x,index_y = np.unravel_index(np.argmax(response),shape=response.shape)
         amplitude_guess = np.max(response)
-        x0_guess = grid_values[index_x]
-        y0_guess = grid_values[index_y]        
-        p0 = [amplitude_guess, x0_guess,.1,y0_guess,.1]
+        # use center-of-mass to get a guess of center
+        x0_guess = np.sum(x*response)/np.sum(response)
+        y0_guess = np.sum(y*response)/np.sum(response)
+
+        # use second moment to get a guess of the width
+        x_width_guess = np.sum((x-x0_guess)**2*response)/np.sum(response)*np.sqrt(2)
+        y_width_guess = np.sum((y-y0_guess)**2*response)/np.sum(response)*np.sqrt(2)        
+   
+        p0 = [amplitude_guess, x0_guess,x_width_guess,y0_guess,y_width_guess]
         
     else:
         m = "optimization over more than 2 dimensions are not yet implemented"
@@ -67,9 +79,23 @@ def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: 
         
             
     response  = np.ravel(np.array(response ))
-    popt, pcov = curve_fit(model,independent_variables,response,p0)
+
+    if x_width_guess < 2*step or dimension ==2 and y_width_guess < 2*step:
+        m = "Width obtained from second moments is small compared to step size; try using a smaller step size"
+
+    
+    try:
+        popt, pcov = curve_fit(model,independent_variables,response,p0)
+    except:
+        print("Fit failed; exiting calibration")
+        return
+    
+    if any(np.isnan(popt)):
+        print("Fit obtained NaN values; exiting calibration")
+        return
     
     if plot:
+        plt.figure()
         if dimension == 1:
             
             plt.plot(grid_values,response,'o')
@@ -97,11 +123,9 @@ def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: 
     [move_mirrors_args.update({optimize_over_axes[index]:popt[index*2+1]}) for index in range(len(optimize_over_axes)) ]
     laser_syst.batch_move_mirrors(**move_mirrors_args)
     
-    
-    print("Fit parameters: "+str(popt))
 
     for mirror in optimize_over_axes:
-        print("Mirror "+mirror + " moved to "+str(move_mirrors_args[mirror]))
+        print("\33[0;49;33mMirror "+mirror + " moved to:\33[0;49;38m "+str(move_mirrors_args[mirror]))
     
     return move_mirrors_args
     
