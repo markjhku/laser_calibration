@@ -129,7 +129,7 @@ if __name__ == "__main__":
     x_result = result['x']
     y_result = result['y']    
     print(f"\33[0;49;36Ion location found with deviation\33[0;49;38m ({x_center-x_result}, {y_center-y_result}) ")
-    
+    print("Looks like accuracy is high, but if you look at the plot, the fit is simply stuck. Step is simply too small compared to point-spread-function. One simply has to use a smaller step")
     
     ###### Same parameter as before, but decrease step size
     print("\n\nAS ABOVE, BUT WITH SMALLER SWEEP STEP")
