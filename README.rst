@@ -9,9 +9,9 @@ To install: at the home folder, run: ``pip install .`` or ``pip install -e .`` f
 
 Detailed documentation is found in the subsequent sections.
 
-To see examples, go to ``\examples\`` and run the scripts in that folder, e.g. ``python simulation_grid_optimization_1d.py``. Note that if one wants to see plot, one needs to use, for example, Spyder or vscode to run them in order to display the plots. 
+To see examples, go to ``\examples\`` and run the scripts in that folder, e.g. ``python simulation_grid_optimization_2d.py``, or This, along with ``python simulation_grid_optimization_1d.py``. These two are the primary examples that showcase the calibration functionality of this package; additional examples are also supplied. Note that if one wants to see plot, one needs to use, for example, Spyder or vscode to run them in order to display the plots. 
 
-To run unit test, go to ``\tests\`` and run ``python test.py``.
+To run unit test, go to ``\tests\`` and run ``python -m unittest test.py``.
 
 Introduction
 -------
@@ -24,11 +24,17 @@ Here are key assumptions in building this package:
 - Multiple sets of mirror systems may need to be calibrated in the same setting, and possibly the different sets of mirror systems may contain same mirrors. As a result, I provide LaserCalibrationSystem class to which one can add arbitrary sets of mirrors.
 - Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will be built out as optimization routine. 
 - Calibration routine provided in this package assumes a single ion present in the range of the mirror movement.
-- Gaussian distribution is a good approximation of the intensity distribution of ion response. This is the basis for the ``grid_sweep_optimize`` fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function). Furthermore, it is assumed that the width of the distribution is a fraction of the mirror range; as a result, initial fit parameters for width is likewise a fraction of unity.
+- Gaussian distribution is a good approximation of the intensity distribution of ion response. While Airy function should be a better approximation of the point-spread-function, Gaussian is a good model in experimental setting.  This is the basis for the ``grid_sweep_optimize`` fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function).
+
+Two major questions are the following: 
+
+- Wow to deal with failure mode? For example, in the case where there is actually no ion in the system, how should the code respond? Or, if photon number is too low or point-spread-function is too narrow, how should the code respond? Should the code simply exit? Should it attempt at another set of parameters? These would be important questions to clarify.
+- What is the precision needed for the calibration to be considered to be successful? 
 
 Improvements I envision, if I have more time, include:
 
 - currently, calibration over two-dimensional mirror movement is supported. General N-dimensional calibration should be readily feasible, with small changes to the codebase, which is for future effort.
+- In 2D case, astigmatism (unequal width in x and y axes) are included, but not rotation. Rotation can be implemented with an additional parameter in the Gaussian.
 - Integrate some kind of asynchronous operation for setting multiple mirrors in parallel
 - more sophisticated optimization algorithm, such as Bayesian optimization
 - tracking mode, where the system will measure a response, and move in small steps and follow the gradient of response for steepest ascent. This is similar to the existing ``generic_optimize``, which makes use of ``scipy``'s ``optimize`` module; however, the ``optimize`` routine is not robust against presence of noise (whether instrument or photon shot noise), so a custom routine needs to be built, which will be for a future effort.
@@ -134,7 +140,13 @@ This will setup `sim` as a function that generates a Gaussian profile with speci
 
 grid_sweep_optimize function
 -------
-This is a built-in calibration routine where up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort) will be swept, with photon number recorded at each ``(x,y)`` location, and the photon number distribution ``n(x,y)`` is fitted to 1 or 2D Gaussian, and the center of the distribution is the location where the mirrors are set to.
+This is the primary calibration routine provided by this package, where up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort) will be swept, with photon number recorded at each ``(x,y)`` location, and the photon number distribution ``n(x,y)`` is fitted to 1 or 2D Gaussian, and the center of the distribution is the location where the mirrors are set to.
+
+The sweep range is fixed to be over the entire mirror range, -1 to 1. This is intentional. Without further information on the setup and how to use the code, I assume we want a more or less automatic algorithm. With more information on the use-case of the code, an implementation of the sweep range as user-supplied arguments would be appropriate. 
+
+The user can supply ``step``, which is the step size of the sweep. The actual value swept is set by ``numpy``'s ``range`` function.
+
+The initial guesses for center and width are determined using the first (center-of-mass) and second moments, which provide very accurate guess as long as the response distribution is well-approximated by Gaussian and signal-to-noise is decent.
 
 To import, run::
 
@@ -150,7 +162,7 @@ Additional options exist; see the docstrings of the function.
 
 generic_optimize function
 -------
-This is a built-in calibration routine where ``scipy``'s ``optimize`` module to optimize the photon number over up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort). More specifically, the ``minimize`` function of ``optimize`` will be used to minimize the negative of the photon number (equivalent to maximizing photon number). This routine is purely for proof-of-principle purpose; during testing, it is found that it is not robust in the presence of any noise, including photon shot noise. Therefore, to use this, one has to use a noise-less photon distribution (without photon shot noise), which is not physical. Nevertheless, this function demonstrates the architecture for using a generic optimization routine for calibration. 
+This is a built-in calibration routine, not currently intended for actual usage but is included as a proof-of-principle. In this calibration routine, ``scipy``'s ``optimize`` module to optimize the photon number over up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort). More specifically, the ``minimize`` function of ``optimize`` will be used to minimize the negative of the photon number (equivalent to maximizing photon number). This routine is purely for proof-of-principle purpose; during testing, it is found that it is not robust in the presence of any noise, including photon shot noise. Therefore, to use this, one has to use a noise-less photon distribution (without photon shot noise), which is not physical. Nevertheless, this function demonstrates the architecture for using a generic optimization routine for calibration. 
 
 To import, run::
 
