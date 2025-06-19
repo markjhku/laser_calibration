@@ -9,7 +9,7 @@ To install: at the home folder, run: ``pip install .`` or ``pip install -e .`` f
 
 Detailed documentation is found in the subsequent sections.
 
-To see examples, go to ``\examples\`` and run the scripts in that folder, e.g. ``python simulation_grid_optimization_2d.py``, or This, along with ``python simulation_grid_optimization_1d.py``. These two are the primary examples that showcase the calibration functionality of this package; additional examples are also supplied. Note that if one wants to see plot, one needs to use, for example, Spyder or vscode to run them in order to display the plots. 
+To see examples, go to ``\examples\`` and run the scripts in that folder, e.g. ``python simulation_grid_optimization_2d.py``, ``python simulation_grid_optimization_1d.py`` , or ``python simulation_grid_optimization_ND.py``. These three are the primary examples that showcase the calibration functionality of this package; additional examples are also supplied. Note that if one wants to see plot, one needs to use, for example, Spyder or vscode to run them in order to display the plots. 
 
 To run unit test, go to ``\tests\`` and run ``python -m unittest test.py``.
 
@@ -28,13 +28,12 @@ Here are key assumptions in building this package:
 
 Two major questions are the following: 
 
-- Wow to deal with failure mode? For example, in the case where there is actually no ion in the system, how should the code respond? Or, if photon number is too low or point-spread-function is too narrow, how should the code respond? Should the code simply exit? Should it attempt at another set of parameters? These would be important questions to clarify.
+- How to deal with failure mode? For example, in the case where there is actually no ion in the system, how should the code respond? Or, if photon number is too low or point-spread-function is too narrow, how should the code respond? Should the code simply exit? Should it attempt at another set of parameters? These would be important questions to clarify.
 - What is the precision needed for the calibration to be considered to be successful? 
 
 Improvements I envision, if I have more time, include:
 
-- currently, calibration over two-dimensional mirror movement is supported. General N-dimensional calibration should be readily feasible, with small changes to the codebase, which is for future effort.
-- In 2D case, astigmatism (unequal width in x and y axes) are included, but not rotation. Rotation can be implemented with an additional parameter in the Gaussian.
+- In the case of grid optimization followed by Gaussian fit, astigmatism (unequal width in x, y axes etc) are included, but not rotation. Rotation can be implemented with an additional parameter in the Gaussian.
 - Integrate some kind of asynchronous operation for setting multiple mirrors in parallel
 - more sophisticated optimization algorithm, such as Bayesian optimization
 - tracking mode, where the system will measure a response, and move in small steps and follow the gradient of response for steepest ascent. This is similar to the existing ``generic_optimize``, which makes use of ``scipy``'s ``optimize`` module; however, the ``optimize`` routine is not robust against presence of noise (whether instrument or photon shot noise), so a custom routine needs to be built, which will be for a future effort.
@@ -124,9 +123,9 @@ Then::
 
     sim = IonResponseSimulation(photon_distribution,use_poisson_distribution,measurement_noise)
 
-Here, ``photon_distribution`` is a function that takes two arguments, ``x`` and ``y``, and return the average photon number. ``use_poisson_distribution`` is boolean, and tells ``IonResponseSimulation`` whether to generate photon count using Poisson distribution or simply the value from ``photon_distribution`` function. ``measurement_noise`` is a ``float`` that indicates noise level from instrument. 
+Here, ``photon_distribution`` is a function that takes n-dimensional arguments corresponding to point in space, and return the average photon number. ``use_poisson_distribution`` is boolean, and tells ``IonResponseSimulation`` whether to generate photon count using Poisson distribution or simply the value from ``photon_distribution`` function. ``measurement_noise`` is a ``float`` that indicates noise level from instrument. 
 
-Based on ``IonResponseSimulation``, I also provide ``GaussianIonResponseSimulation`` which essentially uses a Gaussian distribution for ``photon_distribution``. Therefore, in setting up  ``GaussianIonResponseSimulation``, instead of supplying a function, one supplies parameters of the Gaussian distribution.
+Based on ``IonResponseSimulation``, I also provide ``GaussianIonResponseSimulation`` which essentially uses a 2D Gaussian distribution for ``photon_distribution``. Therefore, in setting up  ``GaussianIonResponseSimulation``, instead of supplying a function, one supplies parameters of the Gaussian distribution.
 
 To import::
 
@@ -140,11 +139,13 @@ This will setup `sim` as a function that generates a Gaussian profile with speci
 
 grid_sweep_optimize function
 -------
-This is the primary calibration routine provided by this package, where up to 2 mirror-dimensions (generic N-dimension can be readily implemented as future effort) will be swept, with photon number recorded at each ``(x,y)`` location, and the photon number distribution ``n(x,y)`` is fitted to 1 or 2D Gaussian, and the center of the distribution is the location where the mirrors are set to.
+This is one of the two primary calibration routines provided by this package, where up to 2 mirror-dimensions will be swept, with photon number recorded at each ``(x,y)`` location, and the photon number distribution ``n(x,y)`` is fitted to 1 or 2D Gaussian, and the center of the distribution is the location where the mirrors are set to.
+
+This essentially has the same functionality as ``grid_sweep_optimize_ND`` (see below), except that this function has plotting capability.
 
 The sweep range is fixed to be over the entire mirror range, -1 to 1. This is intentional. Without further information on the setup and how to use the code, I assume we want a more or less automatic algorithm. With more information on the use-case of the code, an implementation of the sweep range as user-supplied arguments would be appropriate. 
 
-The user can supply ``step``, which is the step size of the sweep. The actual value swept is set by ``numpy``'s ``range`` function.
+The user can supply ``step``, which is the step size of the sweep. The actual value swept is set by ``numpy``'s ``arange`` function.
 
 The initial guesses for center and width are determined using the first (center-of-mass) and second moments, which provide very accurate guess as long as the response distribution is well-approximated by Gaussian and signal-to-noise is decent.
 
@@ -159,6 +160,21 @@ To use, simply run::
 Where ``syst`` is a ``LaserCalibrationSystem`` instance. 
 
 Additional options exist; see the docstrings of the function.
+
+grid_sweep_optimize_ND function
+-------
+This is the other primary calibration routine provided by this package. It is essentially the same as the ``grid_sweep_optimize`` function, but able to handle generic n-th dimensional space (and with no plotting). 
+
+The sweep range and step can be set, see the doc-string of the function on how to use it. If these arguments are not provided, default range (-1 to 1) and step size (0.1) is used for all dimensions.
+The actual value swept is set by ``numpy``'s ``arange`` function.
+
+The initial guesses for center and width are determined using the first (center-of-mass) and second moments, which provide very accurate guess as long as the response distribution is well-approximated by Gaussian and signal-to-noise is decent.
+
+To import, run::
+
+    from laser_calibration.grid_sweep_optimize_ND import grid_sweep_optimize_ND
+
+
 
 generic_optimize function
 -------
