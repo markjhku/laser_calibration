@@ -15,7 +15,7 @@ To run unit test, go to ``\tests\`` and run ``python -m unittest test.py``.
 
 UPDATE 06/19/2025
 -------
-Optimization over n-dimension is now implemented. The function is ``grid_optimization_ND`` (see documentation on this functionality later in this document as well as doc-string in ``grid_optimization_ND.py``), and see example ``\examples\ simulation_grid_optimization_ND.py``.
+Optimization over n-dimension is now implemented. The function is ``grid_sweep_optimize_ND`` (see documentation on this functionality later in this document as well as doc-string in ``grid_sweep_optimize_ND.py``), and see example ``\examples\ simulation_grid_optimization_ND.py``.
 
 Introduction
 -------
