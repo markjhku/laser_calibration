@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 
 def grid_sweep_optimize(laser_syst: LaserCalibrationSystem, optimize_over_axes: str | list[str] | None = None,  step: float = 0.1, plot: bool = True):
     """
-        function to perform grid sweep over up to 2 dimensions, and then
+        functino to perform grid sweep over up to 2 dimensions, and then
         perform Gaussian fit to find the optimal operating point.
         
         Arguments:

@@ -11,16 +11,14 @@ import numpy as np
 class IonResponseSimulation():
     """
         This provides a class for generating photon response based on a generic
-        average-photon distribution. Currently, two spatial dimensions is
-        supported; note that 1D scenario is covered by this class, see the 
-        example `simulation_laser_calibration_system_1d.py`
+        average-photon distribution. 
         
-        To instantiate, one has to supply `photon_distribution`, which is a 1D
-        or 2D function that corresponds to the average-photon distribution 
-        function at x and y.
+        To instantiate, one has to supply `photon_distribution`, which is an 
+        N-dimensional function that corresponds to the average-photon 
+        distribution function
         
         To obtain a measurement, one uses `measure_ion_response` function which
-        is a 2D function.
+        is an N-dimensional function
         
         Options:        
         use_poisson_distribution: whether to generate photon number based on poisson distribution
@@ -34,16 +32,16 @@ class IonResponseSimulation():
         self._measurement_noise = measurement_noise
 
 
-    def measure_ion_response(self,x: float,y: float):
+
+    def measure_ion_response(self,*args):
         """
-            This generates ion response at a location x and y
+            This generates ion response at a location x=args[0], y=args[1],...
             
-            x: float
-            y: float
+            args: list or tuple of float
         """        
         
         
-        photon_number = self._photon_distribution(x,y)
+        photon_number = self._photon_distribution(*args)
         
         if self._use_poisson_distribution:
             photon_number = poisson.rvs(photon_number,size=1)[0]
@@ -51,6 +49,7 @@ class IonResponseSimulation():
         noise = int(np.random.normal(loc = 0, scale = self._measurement_noise))
         
         return photon_number + noise
+    
 
 class GaussianIonResponseSimulation(IonResponseSimulation):
     """
