@@ -33,7 +33,7 @@ if __name__ == "__main__":
         y_width=y_width        )    
             # instantiate a LaserCalibrationSystem class
     # Note how we set up a strictly 1D system here
-    syst = LaserCalibrationSystem(ion_response_function=lambda x: sim.measure_ion_response(x,y=0))
+    syst = LaserCalibrationSystem(ion_response_function=lambda x: sim.measure_ion_response(x,0))
 
     # add mirrors to the LaserCalibrationSystem object
     syst.add_mirror("x", None)
