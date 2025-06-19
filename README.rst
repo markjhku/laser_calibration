@@ -15,7 +15,7 @@ To run unit test, go to ``\tests\`` and run ``python -m unittest test.py``.
 
 Introduction
 -------
-The main concept for the ``laser_calibration`` package is to provide a framework for moving mirror, storing mirror position, and obtaining ion response, so that the user can build customized optimization calibration routine. The key modules are ``Mirror`` and ``LaserCalibrationSystem`` classes. The package also provides a built-in ``grid_sweep_optimize`` and ``generic_optimize`` functions. Simulation mode is also provided, with a generic ``IonResponseSimulation`` class and a ``GaussianIonResponseSimulation`` class, which can provide realistic simulation of ion response that takes into account of photon shot noise. 
+The main concept for the ``laser_calibration`` package is to provide a framework for moving mirror, storing mirror position, and obtaining ion response, so that the user can build customized optimization calibration routine. The key modules are ``Mirror`` and ``LaserCalibrationSystem`` classes. The package also provides a built-in ``grid_sweep_optimize``, ``grid_sweep_optimize_ND``, and ``generic_optimize`` functions. Simulation mode is also provided, with a generic ``IonResponseSimulation`` class and a ``GaussianIonResponseSimulation`` class, which can provide realistic simulation of ion response that takes into account of photon shot noise. 
 
 Here are key assumptions in building this package:
 
@@ -24,7 +24,7 @@ Here are key assumptions in building this package:
 - Multiple sets of mirror systems may need to be calibrated in the same setting, and possibly the different sets of mirror systems may contain same mirrors. As a result, I provide LaserCalibrationSystem class to which one can add arbitrary sets of mirrors.
 - Goal of calibration is to maximize intensity of ion response. Therefore, calibration routines will be built out as optimization routine. 
 - Calibration routine provided in this package assumes a single ion present in the range of the mirror movement.
-- Gaussian distribution is a good approximation of the intensity distribution of ion response. While Airy function should be a better approximation of the point-spread-function, Gaussian is a good model in experimental setting.  This is the basis for the ``grid_sweep_optimize`` fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function).
+- Gaussian distribution is a good approximation of the intensity distribution of ion response. While Airy function should be a better approximation of the point-spread-function, Gaussian is a good model in experimental setting.  This is the basis for the ``grid_sweep_optimize`` and ``grid_sweep_optimize_ND``'s fitting the photon number distribution to Gaussian (using ``scipy``'s ``curve_fit`` function).
 
 Two major questions are the following: 
 
