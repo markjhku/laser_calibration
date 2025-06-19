@@ -13,6 +13,10 @@ To see examples, go to ``\examples\`` and run the scripts in that folder, e.g. `
 
 To run unit test, go to ``\tests\`` and run ``python -m unittest test.py``.
 
+UPDATE 06/19/2025
+-------
+Optimization over n-dimension is now implemented. The function is ``simulation_grid_optimization_ND`` (see documentation on this functionality later in this document as well as doc-string in ``simulation_grid_optimization_ND.py``), and see example ``\examples\ simulation_grid_optimization_ND.py``.
+
 Introduction
 -------
 The main concept for the ``laser_calibration`` package is to provide a framework for moving mirror, storing mirror position, and obtaining ion response, so that the user can build customized optimization calibration routine. The key modules are ``Mirror`` and ``LaserCalibrationSystem`` classes. The package also provides a built-in ``grid_sweep_optimize``, ``grid_sweep_optimize_ND``, and ``generic_optimize`` functions. Simulation mode is also provided, with a generic ``IonResponseSimulation`` class and a ``GaussianIonResponseSimulation`` class, which can provide realistic simulation of ion response that takes into account of photon shot noise. 
